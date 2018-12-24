@@ -116,7 +116,7 @@ void USART_DMA_Config(void)
   /* Configure the DMA stream */
   HAL_DMA_Init(&DMA_Handle); 
   
-	__HAL_DMA_ENABLE(UartHandle.hdmatx);  
+//	__HAL_DMA_ENABLE(UartHandle.hdmatx);  
     
    /* Associate the DMA handle */
   __HAL_LINKDMA(&UartHandle, hdmarx, DMA_Handle);
