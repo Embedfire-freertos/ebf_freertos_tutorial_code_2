@@ -83,7 +83,7 @@ int main(void)
 
   /* 开发板硬件初始化 */
   BSP_Init();
-  PRINTF("这是一个[野火]-STM32全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
+  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
