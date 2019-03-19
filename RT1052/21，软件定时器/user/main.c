@@ -26,18 +26,15 @@
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "event_groups.h"
 /**************************** 任务句柄 ********************************/
 /* 
  * 任务句柄是一个指针，用于指向一个任务，当任务创建好之后，它就具有了一个任务句柄
  * 以后我们要想操作这个任务都需要通过这个任务句柄，如果是自身的任务操作自己，那么
  * 这个句柄可以为NULL。
  */
- /* 创建任务句柄 */
-static TaskHandle_t AppTaskCreate_Handle = NULL;
-/* LED1任务句柄 */
-static TaskHandle_t LED1_Task_Handle = NULL;
-/* LED2任务句柄 */
-static TaskHandle_t LED2_Task_Handle = NULL;
+static TaskHandle_t AppTaskCreate_Handle = NULL;/* 创建任务句柄 */
+
 /********************************** 内核对象句柄 *********************************/
 /*
  * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
@@ -49,13 +46,19 @@ static TaskHandle_t LED2_Task_Handle = NULL;
  * 来完成的
  * 
  */
-
-
+static TimerHandle_t Swtmr1_Handle =NULL;   /* 软件定时器句柄 */
+static TimerHandle_t Swtmr2_Handle =NULL;   /* 软件定时器句柄 */
 /******************************* 全局变量声明 ************************************/
 /*
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
  */
+static uint32_t TmrCb_Count1 = 0; /* 记录软件定时器1回调函数执行次数 */
+static uint32_t TmrCb_Count2 = 0; /* 记录软件定时器2回调函数执行次数 */
 
+/******************************* 宏定义 ************************************/
+/*
+ * 当我们在写应用程序的时候，可能需要用到一些宏定义。
+ */
 
 /*
 *************************************************************************
@@ -64,8 +67,8 @@ static TaskHandle_t LED2_Task_Handle = NULL;
 */
 static void AppTaskCreate(void);/* 用于创建任务 */
 
-static void LED1_Task(void* pvParameters);/* LED1_Task任务实现 */
-static void LED2_Task(void* pvParameters);/* LED2_Task任务实现 */
+static void Swtmr1_Callback(void* parameter);
+static void Swtmr2_Callback(void* parameter);
 
 static void BSP_Init(void);/* 用于初始化板载相关资源 */
 
@@ -80,11 +83,13 @@ static void BSP_Init(void);/* 用于初始化板载相关资源 */
 int main(void)
 {	
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-
+  
   /* 开发板硬件初始化 */
   BSP_Init();
-  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
-   /* 创建AppTaskCreate任务 */
+  
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS软件定时器实验！\n");
+
+  /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
                         (uint16_t       )512,  /* 任务栈大小 */
@@ -109,76 +114,106 @@ int main(void)
   **********************************************************************/
 static void AppTaskCreate(void)
 {
-  BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-  
   taskENTER_CRITICAL();           //进入临界区
-  
-  /* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
-                        (const char*    )"LED1_Task",/* 任务名字 */
-                        (uint16_t       )512,   /* 任务栈大小 */
-                        (void*          )NULL,	/* 任务入口函数参数 */
-                        (UBaseType_t    )2,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
-  if(pdPASS == xReturn)
-    PRINTF("创建LED1_Task任务成功!\r\n");
-  
-	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
-                        (const char*    )"LED2_Task",/* 任务名字 */
-                        (uint16_t       )512,   /* 任务栈大小 */
-                        (void*          )NULL,	/* 任务入口函数参数 */
-                        (UBaseType_t    )3,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
-  if(pdPASS == xReturn)
-    PRINTF("创建LED2_Task任务成功!\r\n");
+    
+  /************************************************************************************
+   * 创建软件周期定时器
+   * 函数原型
+   * TimerHandle_t xTimerCreate(	const char * const pcTimerName,
+								const TickType_t xTimerPeriodInTicks,
+								const UBaseType_t uxAutoReload,
+								void * const pvTimerID,
+                TimerCallbackFunction_t pxCallbackFunction )
+    * @uxAutoReload : pdTRUE为周期模式，pdFALS为单次模式
+   * 单次定时器，周期(1000个时钟节拍)，周期模式
+   *************************************************************************************/
+  Swtmr1_Handle=xTimerCreate((const char*		)"AutoReloadTimer",
+                            (TickType_t			)1000,/* 定时器周期 1000(tick) */
+                            (UBaseType_t		)pdTRUE,/* 周期模式 */
+                            (void*				  )1,/* 为每个计时器分配一个索引的唯一ID */
+                            (TimerCallbackFunction_t)Swtmr1_Callback); 
+  if(Swtmr1_Handle != NULL)                          
+  {
+    /***********************************************************************************
+     * xTicksToWait:如果在调用xTimerStart()时队列已满，则以tick为单位指定调用任务应保持
+     * 在Blocked(阻塞)状态以等待start命令成功发送到timer命令队列的时间。 
+     * 如果在启动调度程序之前调用xTimerStart()，则忽略xTicksToWait。在这里设置等待时间为0.
+     **********************************************************************************/
+    xTimerStart(Swtmr1_Handle,0);	//开启周期定时器
+  }                            
+  /************************************************************************************
+   * 创建软件周期定时器
+   * 函数原型
+   * TimerHandle_t xTimerCreate(	const char * const pcTimerName,
+								const TickType_t xTimerPeriodInTicks,
+								const UBaseType_t uxAutoReload,
+								void * const pvTimerID,
+                TimerCallbackFunction_t pxCallbackFunction )
+    * @uxAutoReload : pdTRUE为周期模式，pdFALS为单次模式
+   * 单次定时器，周期(5000个时钟节拍)，单次模式
+   *************************************************************************************/
+	Swtmr2_Handle=xTimerCreate((const char*			)"OneShotTimer",
+                             (TickType_t			)5000,/* 定时器周期 5000(tick) */
+                             (UBaseType_t			)pdFALSE,/* 单次模式 */
+                             (void*					  )2,/* 为每个计时器分配一个索引的唯一ID */
+                             (TimerCallbackFunction_t)Swtmr2_Callback); 
+  if(Swtmr2_Handle != NULL)
+  {
+   /***********************************************************************************
+   * xTicksToWait:如果在调用xTimerStart()时队列已满，则以tick为单位指定调用任务应保持
+   * 在Blocked(阻塞)状态以等待start命令成功发送到timer命令队列的时间。 
+   * 如果在启动调度程序之前调用xTimerStart()，则忽略xTicksToWait。在这里设置等待时间为0.
+   **********************************************************************************/   
+    xTimerStart(Swtmr2_Handle,0);	//开启周期定时器
+  } 
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
   taskEXIT_CRITICAL();            //退出临界区
 }
 
-
-
-/**********************************************************************
-  * @ 函数名  ： LED_Task
-  * @ 功能说明： LED_Task任务主体
-  * @ 参数    ：   
+/***********************************************************************
+  * @ 函数名  ： Swtmr1_Callback
+  * @ 功能说明： 软件定时器1 回调函数，打印回调函数信息&当前系统时间
+  *              软件定时器请不要调用阻塞函数，也不要进行死循环，应快进快出
+  * @ 参数    ： 无  
   * @ 返回值  ： 无
-  ********************************************************************/
-static void LED1_Task(void* parameter)
-{	
-    while (1)
-    {
-        LED1_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED1_Task Running,LED1_ON\r\n");
-        
-        LED1_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED1_Task Running,LED1_OFF\r\n");
-    }
+  **********************************************************************/
+static void Swtmr1_Callback(void* parameter)
+{		
+  TickType_t tick_num1;
+
+  TmrCb_Count1++;						/* 每回调一次加一 */
+
+  tick_num1 = xTaskGetTickCount();	/* 获取滴答定时器的计数值 */
+  
+  LED1_TOGGLE;
+  
+  PRINTF("Swtmr1_Callback函数执行 %d 次\n", TmrCb_Count1);
+  PRINTF("滴答定时器数值=%d\n", tick_num1);
 }
 
-/**********************************************************************
-  * @ 函数名  ： LED_Task
-  * @ 功能说明： LED_Task任务主体
-  * @ 参数    ：   
+/***********************************************************************
+  * @ 函数名  ： Swtmr2_Callback
+  * @ 功能说明： 软件定时器2 回调函数，打印回调函数信息&当前系统时间
+  *              软件定时器请不要调用阻塞函数，也不要进行死循环，应快进快出
+  * @ 参数    ： 无  
   * @ 返回值  ： 无
-  ********************************************************************/
-static void LED2_Task(void* parameter)
+  **********************************************************************/
+static void Swtmr2_Callback(void* parameter)
 {	
-    while (1)
-    {
-        LED2_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED2_Task Running,LED2_ON\r\n");
-        
-        LED2_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED2_Task Running,LED2_OFF\r\n");
-    }
+  TickType_t tick_num2;
+
+  TmrCb_Count2++;						/* 每回调一次加一 */
+
+  tick_num2 = xTaskGetTickCount();	/* 获取滴答定时器的计数值 */
+
+  PRINTF("Swtmr2_Callback函数执行 %d 次\n", TmrCb_Count2);
+  PRINTF("滴答定时器数值=%d\n", tick_num2);
 }
+
+
+
 /***********************************************************************
   * @ 函数名  ： BSP_Init
   * @ 功能说明： 板级外设初始化，所有板子上的初始化均可放在这个函数里面

@@ -254,7 +254,7 @@
                 FreeRTOS与软件定时器有关的配置选项      
 **********************************************************************/
  //启用软件定时器
-#define configUSE_TIMERS				            0                              
+#define configUSE_TIMERS				            1                              
 //软件定时器优先级
 #define configTIMER_TASK_PRIORITY		        (configMAX_PRIORITIES-1)        
 //软件定时器队列长度
