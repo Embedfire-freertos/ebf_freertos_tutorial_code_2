@@ -23,6 +23,7 @@
 #include "./led/bsp_led.h"  
 #include "./key/bsp_key.h"   
 
+#include <stdio.h>
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -32,29 +33,17 @@
  * 以后我们要想操作这个任务都需要通过这个任务句柄，如果是自身的任务操作自己，那么
  * 这个句柄可以为NULL。
  */
- /* 创建任务句柄 */
-static TaskHandle_t AppTaskCreate_Handle = NULL;
-/* LED1任务句柄 */
-static TaskHandle_t LED1_Task_Handle = NULL;
-/* LED2任务句柄 */
-static TaskHandle_t LED2_Task_Handle = NULL;
-/********************************** 内核对象句柄 *********************************/
-/*
- * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
- * 对象，必须先创建，创建成功之后会返回一个相应的句柄。实际上就是一个指针，后续我
- * 们就可以通过这个句柄操作这些内核对象。
- *
- * 内核对象说白了就是一种全局的数据结构，通过这些数据结构我们可以实现任务间的通信，
- * 任务间的事件同步等各种功能。至于这些功能的实现我们是通过调用这些内核对象的函数
- * 来完成的
- * 
- */
+static TaskHandle_t AppTaskCreate_Handle = NULL;/* 创建任务句柄 */
+static TaskHandle_t LED_Task_Handle = NULL;/* LED_Task任务句柄 */
+static TaskHandle_t Test_Task_Handle = NULL;/* Test_Task任务句柄 */
+
 
 
 /******************************* 全局变量声明 ************************************/
 /*
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
  */
+uint8_t *Test_Ptr = NULL;
 
 
 /*
@@ -64,8 +53,8 @@ static TaskHandle_t LED2_Task_Handle = NULL;
 */
 static void AppTaskCreate(void);/* 用于创建任务 */
 
-static void LED1_Task(void* pvParameters);/* LED1_Task任务实现 */
-static void LED2_Task(void* pvParameters);/* LED2_Task任务实现 */
+static void LED_Task(void* pvParameters);/* LED_Task任务实现 */
+static void Test_Task(void* pvParameters);/* Test_Task任务实现 */
 
 static void BSP_Init(void);/* 用于初始化板载相关资源 */
 
@@ -80,10 +69,11 @@ static void BSP_Init(void);/* 用于初始化板载相关资源 */
 int main(void)
 {	
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-
+  
   /* 开发板硬件初始化 */
   BSP_Init();
-  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS内存管理实验\n");
+  PRINTF("按下KEY1申请内存，按下KEY2释放内存\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -112,26 +102,26 @@ static void AppTaskCreate(void)
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
   
   taskENTER_CRITICAL();           //进入临界区
-  
+
   /* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
-                        (const char*    )"LED1_Task",/* 任务名字 */
+  xReturn = xTaskCreate((TaskFunction_t )LED_Task, /* 任务入口函数 */
+                        (const char*    )"LED_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )2,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
+                        (TaskHandle_t*  )&LED_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    PRINTF("创建LED1_Task任务成功!\r\n");
+    PRINTF("创建LED_Task任务成功\n");
   
-	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
-                        (const char*    )"LED2_Task",/* 任务名字 */
-                        (uint16_t       )512,   /* 任务栈大小 */
-                        (void*          )NULL,	/* 任务入口函数参数 */
-                        (UBaseType_t    )3,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
+  /* 创建Test_Task任务 */
+  xReturn = xTaskCreate((TaskFunction_t )Test_Task,  /* 任务入口函数 */
+                        (const char*    )"Test_Task",/* 任务名字 */
+                        (uint16_t       )512,  /* 任务栈大小 */
+                        (void*          )NULL,/* 任务入口函数参数 */
+                        (UBaseType_t    )3, /* 任务的优先级 */
+                        (TaskHandle_t*  )&Test_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    PRINTF("创建LED2_Task任务成功!\r\n");
+    PRINTF("创建Test_Task任务成功\n\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -146,39 +136,76 @@ static void AppTaskCreate(void)
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED1_Task(void* parameter)
+static void LED_Task(void* parameter)
 {	
-    while (1)
-    {
-        LED1_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED1_Task Running,LED1_ON\r\n");
-        
-        LED1_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED1_Task Running,LED1_OFF\r\n");
-    }
+  while (1)
+  {
+    LED1_TOGGLE;
+    vTaskDelay(1000);/* 延时1000个tick */
+  }
 }
 
 /**********************************************************************
-  * @ 函数名  ： LED_Task
-  * @ 功能说明： LED_Task任务主体
+  * @ 函数名  ： Test_Task
+  * @ 功能说明： Test_Task任务主体
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED2_Task(void* parameter)
-{	
-    while (1)
+static void Test_Task(void* parameter)
+{	 
+  uint32_t g_memsize;
+  while (1)
+  {
+    if( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON )
     {
-        LED2_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED2_Task Running,LED2_ON\r\n");
-        
-        LED2_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED2_Task Running,LED2_OFF\r\n");
+      /* KEY1 被按下 */
+      if(NULL == Test_Ptr)
+      {
+                  
+        /* 获取当前内存大小 */
+        g_memsize = xPortGetFreeHeapSize();
+        PRINTF("系统当前内存大小为 %d 字节，开始申请内存\n",g_memsize);
+        Test_Ptr = pvPortMalloc(1024);
+        if(NULL != Test_Ptr)
+        {
+          PRINTF("内存申请成功\n");
+          PRINTF("申请到的内存地址为%#x\n",(int)Test_Ptr);
+
+          /* 获取当前内剩余存大小 */
+          g_memsize = xPortGetFreeHeapSize();
+          PRINTF("系统当前内存剩余存大小为 %d 字节\n",g_memsize);
+                  
+          //向Test_Ptr中写入当数据:当前系统时间
+          sprintf((char*)Test_Ptr,"当前系统TickCount = %d \n",xTaskGetTickCount());
+          PRINTF("写入的数据是 %s \n",(char*)Test_Ptr);
+        }
+      }
+      else
+      {
+        PRINTF("请先按下KEY2释放内存再申请\n");
+      }
+    } 
+    if( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON )
+    {
+      /* KEY2 被按下 */
+      if(NULL != Test_Ptr)
+      {
+        PRINTF("释放内存\n");
+        vPortFree(Test_Ptr);	//释放内存
+        Test_Ptr=NULL;
+        /* 获取当前内剩余存大小 */
+        g_memsize = xPortGetFreeHeapSize();
+        PRINTF("系统当前内存大小为 %d 字节，内存释放完成\n",g_memsize);
+      }
+      else
+      {
+        PRINTF("请先按下KEY1申请内存再释放\n");
+      }
     }
+    vTaskDelay(20);/* 延时20个tick */
+  }
 }
+
 /***********************************************************************
   * @ 函数名  ： BSP_Init
   * @ 功能说明： 板级外设初始化，所有板子上的初始化均可放在这个函数里面

@@ -26,18 +26,18 @@
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
+#include "semphr.h"
 /**************************** 任务句柄 ********************************/
 /* 
  * 任务句柄是一个指针，用于指向一个任务，当任务创建好之后，它就具有了一个任务句柄
  * 以后我们要想操作这个任务都需要通过这个任务句柄，如果是自身的任务操作自己，那么
  * 这个句柄可以为NULL。
  */
- /* 创建任务句柄 */
-static TaskHandle_t AppTaskCreate_Handle = NULL;
-/* LED1任务句柄 */
-static TaskHandle_t LED1_Task_Handle = NULL;
-/* LED2任务句柄 */
-static TaskHandle_t LED2_Task_Handle = NULL;
+static TaskHandle_t AppTaskCreate_Handle = NULL;/* 创建任务句柄 */
+static TaskHandle_t Take_Task_Handle = NULL;/* Take_Task任务句柄 */
+static TaskHandle_t Give_Task_Handle = NULL;/* Give_Task任务句柄 */
+
 /********************************** 内核对象句柄 *********************************/
 /*
  * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
@@ -49,11 +49,17 @@ static TaskHandle_t LED2_Task_Handle = NULL;
  * 来完成的
  * 
  */
-
+SemaphoreHandle_t CountSem_Handle =NULL;
 
 /******************************* 全局变量声明 ************************************/
 /*
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
+ */
+
+
+/******************************* 宏定义 ************************************/
+/*
+ * 当我们在写应用程序的时候，可能需要用到一些宏定义。
  */
 
 
@@ -64,8 +70,8 @@ static TaskHandle_t LED2_Task_Handle = NULL;
 */
 static void AppTaskCreate(void);/* 用于创建任务 */
 
-static void LED1_Task(void* pvParameters);/* LED1_Task任务实现 */
-static void LED2_Task(void* pvParameters);/* LED2_Task任务实现 */
+static void Take_Task(void* pvParameters);/* Take_Task任务实现 */
+static void Give_Task(void* pvParameters);/* Give_Task任务实现 */
 
 static void BSP_Init(void);/* 用于初始化板载相关资源 */
 
@@ -80,11 +86,14 @@ static void BSP_Init(void);/* 用于初始化板载相关资源 */
 int main(void)
 {	
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-
+  
   /* 开发板硬件初始化 */
   BSP_Init();
-  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
-   /* 创建AppTaskCreate任务 */
+  
+  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS任务通知代替计数信号量实验！\n");
+  PRINTF("车位默认值为0个，按下KEY1申请车位，按下KEY2释放车位！\n\n");
+  
+  /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
                         (uint16_t       )512,  /* 任务栈大小 */
@@ -112,26 +121,26 @@ static void AppTaskCreate(void)
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
   
   taskENTER_CRITICAL();           //进入临界区
-  
-  /* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
-                        (const char*    )"LED1_Task",/* 任务名字 */
+
+  /* 创建Take_Task任务 */
+  xReturn = xTaskCreate((TaskFunction_t )Take_Task, /* 任务入口函数 */
+                        (const char*    )"Take_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )2,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
+                        (TaskHandle_t*  )&Take_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    PRINTF("创建LED1_Task任务成功!\r\n");
+    PRINTF("创建Take_Task任务成功!\r\n");
   
-	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
-                        (const char*    )"LED2_Task",/* 任务名字 */
-                        (uint16_t       )512,   /* 任务栈大小 */
-                        (void*          )NULL,	/* 任务入口函数参数 */
-                        (UBaseType_t    )3,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
+  /* 创建Give_Task任务 */
+  xReturn = xTaskCreate((TaskFunction_t )Give_Task,  /* 任务入口函数 */
+                        (const char*    )"Give_Task",/* 任务名字 */
+                        (uint16_t       )512,  /* 任务栈大小 */
+                        (void*          )NULL,/* 任务入口函数参数 */
+                        (UBaseType_t    )3, /* 任务的优先级 */
+                        (TaskHandle_t*  )&Give_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    PRINTF("创建LED2_Task任务成功!\r\n");
+    PRINTF("创建Give_Task任务成功!\n\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -141,44 +150,61 @@ static void AppTaskCreate(void)
 
 
 /**********************************************************************
-  * @ 函数名  ： LED_Task
-  * @ 功能说明： LED_Task任务主体
+  * @ 函数名  ： Take_Task
+  * @ 功能说明： Take_Task任务主体
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED1_Task(void* parameter)
+static void Take_Task(void* parameter)
 {	
-    while (1)
-    {
-        LED1_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED1_Task Running,LED1_ON\r\n");
-        
-        LED1_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED1_Task Running,LED1_OFF\r\n");
-    }
+  uint32_t take_num = pdTRUE;/* 定义一个创建信息返回值，默认为pdPASS */
+  /* 任务都是一个无限循环，不能返回 */
+  while (1)
+  {
+    //如果KEY1被单击
+		if( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON )       
+		{
+      /* uint32_t ulTaskNotifyTake( BaseType_t xClearCountOnExit, TickType_t xTicksToWait ); 
+       * xClearCountOnExit：pdTRUE 在退出函数的时候任务任务通知值清零，类似二值信号量
+       * pdFALSE 在退出函数ulTaskNotifyTakeO的时候任务通知值减一，类似计数型信号量。
+       */
+      //获取任务通知 ,没获取到则不等待
+      take_num=ulTaskNotifyTake(pdFALSE,0);//
+      if(take_num > 0)
+        PRINTF( "KEY1被按下，成功申请到停车位，当前车位为 %d \n", take_num - 1);
+			else
+        PRINTF( "KEY1被按下，车位已经没有了，请按KEY2释放车位\n" );  
+		}
+		vTaskDelay(20);     //每20ms扫描一次		
+  }
 }
 
 /**********************************************************************
-  * @ 函数名  ： LED_Task
-  * @ 功能说明： LED_Task任务主体
+  * @ 函数名  ： Give_Task
+  * @ 功能说明： Give_Task任务主体
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED2_Task(void* parameter)
-{	
-    while (1)
-    {
-        LED2_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED2_Task Running,LED2_ON\r\n");
-        
-        LED2_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED2_Task Running,LED2_OFF\r\n");
-    }
+static void Give_Task(void* parameter)
+{	 
+  BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+  /* 任务都是一个无限循环，不能返回 */
+  while (1)
+  {
+    //如果KEY2被单击
+		if( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON )       
+		{
+      /* 原型:BaseType_t xTaskNotifyGive( TaskHandle_t xTaskToNotify ); */
+			/* 释放一个任务通知 */
+      xTaskNotifyGive(Take_Task_Handle);//发送任务通知
+      /* 此函数只会返回pdPASS */
+			if ( pdPASS == xReturn ) 
+				PRINTF( "KEY2被按下，释放1个停车位。\n" );
+		}
+		vTaskDelay(20);     //每20ms扫描一次	
+  }
 }
+
 /***********************************************************************
   * @ 函数名  ： BSP_Init
   * @ 功能说明： 板级外设初始化，所有板子上的初始化均可放在这个函数里面
