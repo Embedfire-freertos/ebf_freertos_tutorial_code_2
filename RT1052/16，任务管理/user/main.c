@@ -32,12 +32,10 @@
  * 以后我们要想操作这个任务都需要通过这个任务句柄，如果是自身的任务操作自己，那么
  * 这个句柄可以为NULL。
  */
- /* 创建任务句柄 */
-static TaskHandle_t AppTaskCreate_Handle = NULL;
-/* LED1任务句柄 */
-static TaskHandle_t LED1_Task_Handle = NULL;
-/* LED2任务句柄 */
-static TaskHandle_t LED2_Task_Handle = NULL;
+static TaskHandle_t AppTaskCreate_Handle = NULL;/* 创建任务句柄 */
+static TaskHandle_t LED_Task_Handle = NULL;/* LED任务句柄 */
+static TaskHandle_t KEY_Task_Handle = NULL;/* KEY任务句柄 */
+
 /********************************** 内核对象句柄 *********************************/
 /*
  * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
@@ -64,8 +62,8 @@ static TaskHandle_t LED2_Task_Handle = NULL;
 */
 static void AppTaskCreate(void);/* 用于创建任务 */
 
-static void LED1_Task(void* pvParameters);/* LED1_Task任务实现 */
-static void LED2_Task(void* pvParameters);/* LED2_Task任务实现 */
+static void LED_Task(void* pvParameters);/* LED_Task任务实现 */
+static void KEY_Task(void* pvParameters);/* KEY_Task任务实现 */
 
 static void BSP_Init(void);/* 用于初始化板载相关资源 */
 
@@ -80,10 +78,13 @@ static void BSP_Init(void);/* 用于初始化板载相关资源 */
 int main(void)
 {	
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-
+  
   /* 开发板硬件初始化 */
   BSP_Init();
-  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
+  
+  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS任务管理实验！\n\n");
+  PRINTF("按下KEY1挂起任务，按下KEY2恢复任务\n");
+  
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -114,24 +115,23 @@ static void AppTaskCreate(void)
   taskENTER_CRITICAL();           //进入临界区
   
   /* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
-                        (const char*    )"LED1_Task",/* 任务名字 */
+  xReturn = xTaskCreate((TaskFunction_t )LED_Task, /* 任务入口函数 */
+                        (const char*    )"LED_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )2,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
+                        (TaskHandle_t*  )&LED_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    PRINTF("创建LED1_Task任务成功!\r\n");
-  
-	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
-                        (const char*    )"LED2_Task",/* 任务名字 */
-                        (uint16_t       )512,   /* 任务栈大小 */
-                        (void*          )NULL,	/* 任务入口函数参数 */
-                        (UBaseType_t    )3,	    /* 任务的优先级 */
-                        (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
+    PRINTF("创建LED_Task任务成功!\r\n");
+  /* 创建KEY_Task任务 */
+  xReturn = xTaskCreate((TaskFunction_t )KEY_Task,  /* 任务入口函数 */
+                        (const char*    )"KEY_Task",/* 任务名字 */
+                        (uint16_t       )512,  /* 任务栈大小 */
+                        (void*          )NULL,/* 任务入口函数参数 */
+                        (UBaseType_t    )3, /* 任务的优先级 */
+                        (TaskHandle_t*  )&KEY_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    PRINTF("创建LED2_Task任务成功!\r\n");
+    PRINTF("创建KEY_Task任务成功!\r\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -146,18 +146,18 @@ static void AppTaskCreate(void)
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED1_Task(void* parameter)
+static void LED_Task(void* parameter)
 {	
-    while (1)
-    {
-        LED1_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED1_Task Running,LED1_ON\r\n");
-        
-        LED1_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED1_Task Running,LED1_OFF\r\n");
-    }
+  while (1)
+  {
+    LED1_ON;
+    PRINTF("LED_Task Running,LED1_ON\r\n");
+    vTaskDelay(500);   /* 延时500个tick */
+    
+    LED1_OFF;     
+    PRINTF("LED_Task Running,LED1_OFF\r\n");
+    vTaskDelay(500);   /* 延时500个tick */
+  }
 }
 
 /**********************************************************************
@@ -166,18 +166,24 @@ static void LED1_Task(void* parameter)
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
-static void LED2_Task(void* parameter)
+static void KEY_Task(void* parameter)
 {	
-    while (1)
-    {
-        LED2_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        PRINTF("LED2_Task Running,LED2_ON\r\n");
-        
-        LED2_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
-        PRINTF("LED2_Task Running,LED2_OFF\r\n");
+  while (1)
+  {
+    if( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON )
+    {/* K1 被按下 */
+      PRINTF("挂起LED任务！\n");
+      vTaskSuspend(LED_Task_Handle);/* 挂起LED任务 */
+      PRINTF("挂起LED任务成功！\n");
+    } 
+    if( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON )
+    {/* K2 被按下 */
+      PRINTF("恢复LED任务！\n");
+      vTaskResume(LED_Task_Handle);/* 恢复LED任务！ */
+      PRINTF("恢复LED任务成功！\n");
     }
+    vTaskDelay(20);/* 延时20个tick */
+  }
 }
 /***********************************************************************
   * @ 函数名  ： BSP_Init

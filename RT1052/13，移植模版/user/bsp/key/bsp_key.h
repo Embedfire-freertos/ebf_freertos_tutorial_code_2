@@ -21,6 +21,13 @@
 #define KEY_ON      0   //低电平表示按下按键
 #define KEY_OFF     1   
 
+/* 兼容的宏接口 */
+#define KEY1_GPIO_PORT      CORE_BOARD_WAUP_KEY_GPIO
+#define KEY1_PIN             CORE_BOARD_WAUP_KEY_GPIO_PIN
+
+#define KEY2_GPIO_PORT      CORE_BOARD_MODE_KEY_GPIO
+#define KEY2_PIN             CORE_BOARD_MODE_KEY_GPIO_PIN
+
 /*************状态机检测使用的定义****************/
 #define KEY_LONG_PRESS_COUNT  3000000 //长按检测时间
 #define KEY_FILTERING_COUNT   500     //消抖时间
