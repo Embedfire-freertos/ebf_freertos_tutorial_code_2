@@ -3729,7 +3729,7 @@
                 </option>
                 <option>
                     <name>AUserIncludes</name>
-                    <state>$PROJ_DIR$\..\..\user
+                    <state>$PROJ_DIR$\..\..\user
 </state>
                 </option>
                 <option>
@@ -7306,6 +7306,9 @@
         <group>
             <name>port</name>
             <file>
+                <name>$PROJ_DIR$\..\..\FreeRTOS\port\MemMang\heap_4.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\FreeRTOS\port\IAR\ARM_CM7\r0p1\port.c</name>
             </file>
             <file>
@@ -7357,7 +7360,16 @@
     <group>
         <name>user</name>
         <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\key\bsp_key.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\user\bsp\led\bsp_led.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\systick\bsp_systick.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\delay\core_delay.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\user\FreeRTOSConfig.h</name>
