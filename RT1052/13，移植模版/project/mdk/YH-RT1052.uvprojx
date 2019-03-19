@@ -533,6 +533,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1144,6 +1159,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1754,6 +1784,21 @@
               <FileName>FreeRTOSConfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2367,6 +2412,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2978,6 +3038,21 @@
               <FileName>FreeRTOSConfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3591,6 +3666,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
             </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4202,6 +4292,21 @@
               <FileName>FreeRTOSConfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\user\FreeRTOSConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>core_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\delay\core_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\key\bsp_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\systick\bsp_systick.c</FilePath>
             </File>
           </Files>
         </Group>
