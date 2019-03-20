@@ -77,6 +77,8 @@
     #include <stdint.h>
     #include "fsl_debug_console.h"
     extern uint32_t SystemCoreClock;
+    extern volatile uint32_t CPU_RunTime;
+
 
 #endif
 
@@ -240,7 +242,6 @@
 */
 #define configUSE_STATS_FORMATTING_FUNCTIONS	1     
 
-extern volatile uint32_t CPU_RunTime;
 
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()     (CPU_RunTime = 0ul)
 #define portGET_RUN_TIME_COUNTER_VALUE()             CPU_RunTime                            

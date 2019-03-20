@@ -22,6 +22,7 @@
 
 #include "./led/bsp_led.h"  
 #include "./key/bsp_key.h"   
+#include "./pit/bsp_pit.h"
 
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
@@ -84,7 +85,7 @@ int main(void)
 
   /* 开发板硬件初始化 */
   BSP_Init();
-  printf("这是一个[野火]-STM32全系列开发板-FreeRTOS-CPU利用率统计实验!\r\n");
+  PRINTF("这是一个[野火]-全系列开发板-FreeRTOS-CPU利用率统计实验!\r\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -122,7 +123,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )2,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建LED1_Task任务成功!\r\n");
+    PRINTF("创建LED1_Task任务成功!\r\n");
   
   /* 创建LED_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
@@ -132,7 +133,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )3,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建LED2_Task任务成功!\r\n");
+    PRINTF("创建LED2_Task任务成功!\r\n");
 
   /* 创建LED_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )CPU_Task, /* 任务入口函数 */
@@ -142,7 +143,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )4,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&CPU_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建CPU_Task任务成功!\r\n");
+    PRINTF("创建CPU_Task任务成功!\r\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -163,10 +164,10 @@ static void LED1_Task(void* parameter)
   {
     LED1_ON;
     vTaskDelay(500);   /* 延时500个tick */
-    printf("LED1_Task Running,LED1_ON\r\n");
+    PRINTF("LED1_Task Running,LED1_ON\r\n");
     LED1_OFF;     
     vTaskDelay(500);   /* 延时500个tick */		 		
-    printf("LED1_Task Running,LED1_OFF\r\n");
+    PRINTF("LED1_Task Running,LED1_OFF\r\n");
 
   }
 }
@@ -177,11 +178,11 @@ static void LED2_Task(void* parameter)
   {
     LED2_ON;
     vTaskDelay(300);   /* 延时500个tick */
-    printf("LED2_Task Running,LED1_ON\r\n");
+    PRINTF("LED2_Task Running,LED1_ON\r\n");
     
     LED2_OFF;     
     vTaskDelay(300);   /* 延时500个tick */		 		
-    printf("LED2_Task Running,LED1_OFF\r\n");
+    PRINTF("LED2_Task Running,LED1_OFF\r\n");
   }
 }
 
@@ -195,18 +196,18 @@ static void CPU_Task(void* parameter)
     
     vTaskList((char *)&CPU_RunInfo);  //获取任务运行时间信息
     
-    printf("---------------------------------------------\r\n");
-    printf("任务名      任务状态 优先级   剩余栈 任务序号\r\n");
-    printf("%s", CPU_RunInfo);
-    printf("---------------------------------------------\r\n");
+    PRINTF("---------------------------------------------\r\n");
+    PRINTF("任务名      任务状态 优先级   剩余栈 任务序号\r\n");
+    PRINTF("%s", CPU_RunInfo);
+    PRINTF("---------------------------------------------\r\n");
     
     memset(CPU_RunInfo,0,400);				//信息缓冲区清零
     
     vTaskGetRunTimeStats((char *)&CPU_RunInfo);
     
-    printf("任务名       运行计数         使用率\r\n");
-    printf("%s", CPU_RunInfo);
-    printf("---------------------------------------------\r\n\n");
+    PRINTF("任务名       运行计数         使用率\r\n");
+    PRINTF("%s", CPU_RunInfo);
+    PRINTF("---------------------------------------------\r\n\n");
     vTaskDelay(1000);   /* 延时500个tick */		
   }
 }
@@ -227,6 +228,11 @@ static void BSP_Init(void)
   BOARD_BootClockRUN();
   /* 初始化调试串口 */
   BOARD_InitDebugConsole();
+  
+  /*RT1052不支持无子优先级的中断分组，按照port.c的770行代码相关的注释，
+  调用NVIC_SetPriorityGrouping(0)设置中断优先级分组*/
+  NVIC_SetPriorityGrouping(0); 
+
   /* 打印系统时钟 */
   PRINTF("\r\n");
   PRINTF("*****欢迎使用 野火i.MX RT1052 开发板*****\r\n");
@@ -250,6 +256,13 @@ static void BSP_Init(void)
 
   /* KEY 端口初始化 */
   Key_GPIO_Config();
+  
+   /*初始化PIT定时器*/
+  PIT_TIMER_Init();
+  
+  /*开启定时器*/
+  PIT_StartTimer(PIT, PIT_CHANNEL_X);
+
   
 }
 /****************************END OF FILE**********************/
