@@ -22,7 +22,8 @@
 
 #include "./led/bsp_led.h"  
 #include "./key/bsp_key.h"   
-
+#include "./nvic/bsp_nvic.h"
+#include "./key/bsp_key_it.h"
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -58,7 +59,7 @@ SemaphoreHandle_t BinarySem_Handle =NULL;
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
  */
  
-extern char RX_BUFF[USART_RBUFF_SIZE];
+//extern char RX_BUFF[USART_RBUFF_SIZE];
  
  
 /******************************* 宏定义 ************************************/
@@ -96,7 +97,7 @@ int main(void)
   /* 开发板硬件初始化 */
   BSP_Init();
   
-	PRINTF("这是一个[野火]-STM32全系列开发板-FreeRTOS中断管理实验！\n");
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS中断管理实验！\n");
   PRINTF("按下KEY1 | KEY2触发中断！\n");
   PRINTF("串口发送数据触发中断,任务处理数据!\n");
   
@@ -216,8 +217,8 @@ static void KEY_Task(void* parameter)
     if(pdPASS == xReturn)
     {
       LED2_TOGGLE;
-      PRINTF("收到数据:%s\n",RX_BUFF);
-      memset(RX_BUFF,0,USART_RBUFF_SIZE);/* 清零 */
+//      PRINTF("收到数据:%s\n",RX_BUFF);
+//      memset(RX_BUFF,0,USART_RBUFF_SIZE);/* 清零 */
     }
   }
 }
@@ -239,6 +240,11 @@ static void BSP_Init(void)
   BOARD_BootClockRUN();
   /* 初始化调试串口 */
   BOARD_InitDebugConsole();
+  
+  /*RT1052不支持无子优先级的中断分组，按照port.c的770行代码相关的注释，
+    调用NVIC_SetPriorityGrouping(0)设置中断优先级分组*/
+  NVIC_SetPriorityGrouping(0); 
+
   /* 打印系统时钟 */
   PRINTF("\r\n");
   PRINTF("*****欢迎使用 野火i.MX RT1052 开发板*****\r\n");
@@ -257,11 +263,14 @@ static void BSP_Init(void)
 	/* 硬件BSP初始化统统放在这里，比如LED，串口，LCD等 */
     
 	/* LED 端口初始化 */
-	LED_GPIO_Config();	
-	
+	LED_GPIO_Config();		
 
-  /* KEY 端口初始化 */
-  Key_GPIO_Config();
+//  /* KEY 端口初始化 */
+//  Key_GPIO_Config();
+  
+  /* 初始化KEY引脚 */
+  Key_IT_GPIO_Config();
+
   
 }
 /****************************END OF FILE**********************/

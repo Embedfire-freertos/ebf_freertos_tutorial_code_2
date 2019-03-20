@@ -8385,7 +8385,13 @@
             <name>$PROJ_DIR$\..\..\user\bsp\key\bsp_key.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\key\bsp_key_it.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\user\bsp\led\bsp_led.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\nvic\bsp_nvic .c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\user\bsp\systick\bsp_systick.c</name>
