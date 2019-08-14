@@ -651,35 +651,30 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>235</LineNumber>
+          <LineNumber>181</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>1610629332</Address>
+          <Address>1610630546</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>E:\閲庣伀鐢靛瓙\FreeRTOS\base_code\RT1052\user\main.c</Filename>
+          <Filename>E:\閲庣伀鐢靛瓙\FreeRTOS\base_code\RT1052\user\bsp\dma_uart\bsp_dma_uart.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\YH_RT1052\../../user/main.c\235</Expression>
+          <Expression>\\YH_RT1052\../../user/bsp/dma_uart/bsp_dma_uart.c\181</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RX_BUFF</ItemText>
+          <ItemText>arrary</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RX_BUFF</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>arrary</ItemText>
+          <ItemText>index_num,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

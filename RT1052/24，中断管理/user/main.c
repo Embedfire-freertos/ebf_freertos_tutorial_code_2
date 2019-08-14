@@ -25,17 +25,11 @@
 #include "./nvic/bsp_nvic.h"
 #include "./key/bsp_key_it.h"
 #include "./bsp/uart/bsp_uart.h"
-#include "./bsp/dma_uart/bsp_dma_uart.h"
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-
-/*设置TX和RX数据存储区*/
-AT_NONCACHEABLE_SECTION_INIT(uint8_t g_txBuffer[ECHO_BUFFER_LENGTH]) = {0};
-AT_NONCACHEABLE_SECTION_INIT(uint8_t g_rxBuffer[ECHO_BUFFER_LENGTH]) = {0};
-
 
 
 
@@ -209,7 +203,7 @@ static void LED_Task(void* parameter)
 }
 extern uint8_t arrary[30];
 extern int index_num;
-extern uint8_t str_c;//测试的字符串
+//extern uint8_t str_c;//测试的字符串
 /**********************************************************************
   * @ 函数名  ： LED_Task
   * @ 功能说明： LED_Task任务主体
@@ -225,13 +219,11 @@ static void KEY_Task(void* parameter)
     //获取二值信号量 xSemaphore,没获取到则一直等待
 		xReturn = xSemaphoreTake(BinarySem_Handle,/* 二值信号量句柄 */
                               portMAX_DELAY); /* 等待时间 */
-		//PRINTF(" 运行中\n");
     if(pdPASS == xReturn)
     {
 			
 
       LED2_TOGGLE;
-      //PRINTF("收到数据:%c\n",str_c);
 			PRINTF("收到数据:%s\n",arrary);
 			memset(arrary,0,30);
 			index_num=0;
@@ -240,7 +232,6 @@ static void KEY_Task(void* parameter)
     }
   }
 }
-
 
 /***********************************************************************
   * @ 函数名  ： BSP_Init

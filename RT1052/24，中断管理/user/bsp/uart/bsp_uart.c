@@ -146,31 +146,22 @@ void Uart_SendHalfWord(LPUART_Type *base, uint16_t ch)
   LPUART_WriteByte( base, temp_l);
   while (!(base->STAT & LPUART_STAT_TDRE_MASK));  
 }
+extern SemaphoreHandle_t BinarySem_Handle;
+
+/******************串口接收中断服务函数********************/
  extern SemaphoreHandle_t BinarySem_Handle;
 void UART_IdelCallback(void)
 {
-	  BaseType_t pxHigherPriorityTaskWoken;
+	BaseType_t pxHigherPriorityTaskWoken;
   
-//  // 关闭DMA ，防止干扰
-//  __HAL_DMA_DISABLE(&DMA_Handle);      
-//  // 清DMA标志位
-//  __HAL_DMA_CLEAR_FLAG(&DMA_Handle,DMA_FLAG_TCIF3_7);     
-
-  //  重新赋值计数值，必须大于等于最大可能接收到的数据帧数目   
-//  WRITE_REG(((DMA_Stream_TypeDef   *)DMA_Handle.Instance)->NDTR , USART_RBUFF_SIZE);
-
-//  __HAL_DMA_ENABLE(&DMA_Handle);  
-
   //给出二值信号量 ，发送接收到新数据标志，供前台程序查询
   xSemaphoreGiveFromISR(BinarySem_Handle,&pxHigherPriorityTaskWoken);	//释放二值信号量
   //如果需要的话进行一次任务切换，系统会判断是否需要进行切换
   portYIELD_FROM_ISR(pxHigherPriorityTaskWoken);
 }
-
 int index_num=0;
 uint8_t arrary[30];
 uint8_t str_c;//测试的字符串
-/******************串口接收中断服务函数********************/
 void DEBUG_UART_IRQHandler(void)
 {
 	uint32_t ulReturn;
@@ -181,20 +172,23 @@ void DEBUG_UART_IRQHandler(void)
   /*串口接收到数据*/
   if ((kLPUART_RxDataRegFullFlag)&LPUART_GetStatusFlags(DEBUG_UARTx))
   {
-			UART_IdelCallback();	/* 释放一个信号量，表示数据已接收 */
+			
 
 			/*读取数据*///这句话一定要有，否则清不了标志，会死在中断里面
 			ucTemp = LPUART_ReadByte(DEBUG_UARTx);
 			str_c=ucTemp;
 			arrary[index_num++]=ucTemp;
+			//发送数据是 加回车
+			if((arrary[index_num-2]==0x0D)&&(arrary[index_num-1]==0x0A))
+			{
+				UART_IdelCallback();	/* 释放一个信号量，表示数据已接收 */
+			}
 
    }			
  
   /* 退出临界段 */
   taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 }
-
-
 
 
 
