@@ -4,7 +4,7 @@
   * @author  fire
   * @version V1.0
   * @date    2018-xx-xx
-  * @brief   GPIO输出—使用固件库点亮LED灯
+  * @brief   任务通知代替事件组
   ******************************************************************
   * @attention
   *
@@ -280,7 +280,6 @@ static void BSP_Init(void)
 	/* LED 端口初始化 */
 	LED_GPIO_Config();	
 	
-
   /* KEY 端口初始化 */
   Key_GPIO_Config();
   

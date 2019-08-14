@@ -90,7 +90,7 @@ int main(void)
   
   /* 开发板硬件初始化 */
   BSP_Init();
-	printf("这是一个[野火]-全系列开发板-FreeRTOS互斥量实验！\n");
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS互斥量实验！\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -123,11 +123,11 @@ static void AppTaskCreate(void)
   /* 创建MuxSem */
   MuxSem_Handle = xSemaphoreCreateMutex();	 
   if(NULL != MuxSem_Handle)
-    printf("MuxSem_Handle互斥量创建成功!\r\n");
+    PRINTF("MuxSem_Handle互斥量创建成功!\r\n");
 
   xReturn = xSemaphoreGive( MuxSem_Handle );//给出互斥量
 //  if( xReturn == pdTRUE )
-//    printf("释放信号量!\r\n");
+//    PRINTF("释放信号量!\r\n");
     
   /* 创建LowPriority_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )LowPriority_Task, /* 任务入口函数 */
@@ -137,7 +137,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )2,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LowPriority_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建LowPriority_Task任务成功!\r\n");
+    PRINTF("创建LowPriority_Task任务成功!\r\n");
   
   /* 创建MidPriority_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )MidPriority_Task,  /* 任务入口函数 */
@@ -147,7 +147,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )3, /* 任务的优先级 */
                         (TaskHandle_t*  )&MidPriority_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    printf("创建MidPriority_Task任务成功!\n");
+    PRINTF("创建MidPriority_Task任务成功!\n");
   
   /* 创建HighPriority_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )HighPriority_Task,  /* 任务入口函数 */
@@ -157,7 +157,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )4, /* 任务的优先级 */
                         (TaskHandle_t*  )&HighPriority_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    printf("创建HighPriority_Task任务成功!\n\n");
+    PRINTF("创建HighPriority_Task任务成功!\n\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -178,19 +178,19 @@ static void LowPriority_Task(void* parameter)
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
   while (1)
   {
-    printf("LowPriority_Task 获取互斥量\n");
+    PRINTF("LowPriority_Task 获取互斥量\n");
     //获取互斥量 MuxSem,没获取到则一直等待
 		xReturn = xSemaphoreTake(MuxSem_Handle,/* 互斥量句柄 */
                               portMAX_DELAY); /* 等待时间 */
     if(pdTRUE == xReturn)
-    printf("LowPriority_Task Runing\n\n");
+    PRINTF("LowPriority_Task Runing\n\n");
     
     for(i=0;i<2000000;i++)//模拟低优先级任务占用互斥量
 		{
 			taskYIELD();//发起任务调度
 		}
     
-    printf("LowPriority_Task 释放互斥量!\r\n");
+    PRINTF("LowPriority_Task 释放互斥量!\r\n");
     xReturn = xSemaphoreGive( MuxSem_Handle );//给出互斥量
       
 		LED1_TOGGLE;
@@ -209,7 +209,7 @@ static void MidPriority_Task(void* parameter)
 {	 
   while (1)
   {
-   printf("MidPriority_Task Runing\n");
+   PRINTF("MidPriority_Task Runing\n");
    vTaskDelay(1000);
   }
 }
@@ -225,15 +225,15 @@ static void HighPriority_Task(void* parameter)
   BaseType_t xReturn = pdTRUE;/* 定义一个创建信息返回值，默认为pdPASS */
   while (1)
   {
-    printf("HighPriority_Task 获取互斥量\n");
+    PRINTF("HighPriority_Task 获取互斥量\n");
     //获取互斥量 MuxSem,没获取到则一直等待
 		xReturn = xSemaphoreTake(MuxSem_Handle,/* 互斥量句柄 */
                               portMAX_DELAY); /* 等待时间 */
     if(pdTRUE == xReturn)
-      printf("HighPriority_Task Runing\n");
+      PRINTF("HighPriority_Task Runing\n");
 		LED1_TOGGLE;
     
-    printf("HighPriority_Task 释放互斥量!\r\n");
+    PRINTF("HighPriority_Task 释放互斥量!\r\n");
     xReturn = xSemaphoreGive( MuxSem_Handle );//给出互斥量
 
   

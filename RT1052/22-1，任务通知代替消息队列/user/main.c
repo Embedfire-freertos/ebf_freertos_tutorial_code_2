@@ -4,7 +4,7 @@
   * @author  fire
   * @version V1.0
   * @date    2018-xx-xx
-  * @brief   GPIO输出—使用固件库点亮LED灯
+  * @brief   任务通知代替消息队列
   ******************************************************************
   * @attention
   *
@@ -91,8 +91,8 @@ int main(void)
   
   /* 开发板硬件初始化 */
   BSP_Init();
-	printf("这是一个[野火]-全系列开发板-FreeRTOS任务通知代替消息队列实验！\n");
-  printf("按下KEY1或者KEY2进行任务消息通知发送 \n");
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS任务通知代替消息队列实验！\n");
+  PRINTF("按下KEY1或者KEY2进行任务消息通知发送 \n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -130,7 +130,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )2,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&Receive1_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建Receive1_Task任务成功!\r\n");
+    PRINTF("创建Receive1_Task任务成功!\r\n");
   
   /* 创建Receive2_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )Receive2_Task, /* 任务入口函数 */
@@ -140,7 +140,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )3,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&Receive2_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建Receive2_Task任务成功!\r\n");
+    PRINTF("创建Receive2_Task任务成功!\r\n");
   
   /* 创建Send_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )Send_Task,  /* 任务入口函数 */
@@ -150,7 +150,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )4, /* 任务的优先级 */
                         (TaskHandle_t*  )&Send_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    printf("创建Send_Task任务成功!\n\n");
+    PRINTF("创建Send_Task任务成功!\n\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -200,9 +200,9 @@ static void Receive1_Task(void* parameter)
                             portMAX_DELAY);	//阻塞时间
     if( pdTRUE == xReturn )
 #if USE_CHAR
-      printf("Receive1_Task 任务通知消息为 %s \n",r_char);                      
+      PRINTF("Receive1_Task 任务通知消息为 %s \n",r_char);                      
 #else
-      printf("Receive1_Task 任务通知消息为 %d \n",r_num);                      
+      PRINTF("Receive1_Task 任务通知消息为 %d \n",r_num);                      
 #endif  
      
     
@@ -251,9 +251,9 @@ static void Receive2_Task(void* parameter)
                             portMAX_DELAY);	//阻塞时间
     if( pdTRUE == xReturn )
 #if USE_CHAR
-      printf("Receive2_Task 任务通知消息为 %s \n",r_char);                      
+      PRINTF("Receive2_Task 任务通知消息为 %s \n",r_char);                      
 #else
-      printf("Receive2_Task 任务通知消息为 %d \n",r_num);                      
+      PRINTF("Receive2_Task 任务通知消息为 %d \n",r_num);                      
 #endif  
 		LED2_TOGGLE;
   }
@@ -305,7 +305,7 @@ static void Send_Task(void* parameter)
                              eSetValueWithOverwrite );/*覆盖当前通知*/
       
       if( xReturn == pdPASS )
-        printf("Receive1_Task_Handle 任务通知消息发送成功!\r\n");
+        PRINTF("Receive1_Task_Handle 任务通知消息发送成功!\r\n");
     } 
     /* KEY2 被按下 */
     if( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON )
@@ -319,7 +319,7 @@ static void Send_Task(void* parameter)
                              eSetValueWithOverwrite );/*覆盖当前通知*/
       /* 此函数只会返回pdPASS */
       if( xReturn == pdPASS )
-        printf("Receive2_Task_Handle 任务通知消息发送成功!\r\n");
+        PRINTF("Receive2_Task_Handle 任务通知消息发送成功!\r\n");
     }
     vTaskDelay(20);
   }

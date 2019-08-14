@@ -4,7 +4,7 @@
   * @author  fire
   * @version V1.0
   * @date    2018-xx-xx
-  * @brief   GPIO输出—使用固件库点亮LED灯
+  * @brief   SRAM动态创建多任务
   ******************************************************************
   * @attention
   *
