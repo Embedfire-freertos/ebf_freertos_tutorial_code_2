@@ -436,6 +436,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -560,6 +575,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1075,6 +1095,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1199,6 +1234,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1714,6 +1754,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1838,6 +1893,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2354,6 +2414,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2478,6 +2553,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2994,6 +3074,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3118,6 +3213,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3634,6 +3734,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3758,6 +3873,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -4274,6 +4394,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\libraries\drivers\fsl_iomuxc.h</FilePath>
             </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dmamux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\fsl_dmamux.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4398,6 +4533,11 @@
               <FileName>bsp_key_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\user\bsp\key\bsp_key_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\user\bsp\uart\bsp_uart.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -24,11 +24,21 @@
 #include "./key/bsp_key.h"   
 #include "./nvic/bsp_nvic.h"
 #include "./key/bsp_key_it.h"
+#include "./bsp/uart/bsp_uart.h"
+#include "./bsp/dma_uart/bsp_dma_uart.h"
 /* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+
+/*设置TX和RX数据存储区*/
+AT_NONCACHEABLE_SECTION_INIT(uint8_t g_txBuffer[ECHO_BUFFER_LENGTH]) = {0};
+AT_NONCACHEABLE_SECTION_INIT(uint8_t g_rxBuffer[ECHO_BUFFER_LENGTH]) = {0};
+
+
+
+
 
 /**************************** 任务句柄 ********************************/
 /* 
@@ -59,7 +69,7 @@ SemaphoreHandle_t BinarySem_Handle =NULL;
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
  */
  
-//extern char RX_BUFF[USART_RBUFF_SIZE];
+extern char RX_BUFF[30];
  
  
 /******************************* 宏定义 ************************************/
@@ -194,11 +204,12 @@ static void LED_Task(void* parameter)
 		{
 			PRINTF("数据接收出错\n");
 		}
-		
     LED1_TOGGLE;
   }
 }
-
+extern uint8_t arrary[30];
+extern int index_num;
+extern uint8_t str_c;//测试的字符串
 /**********************************************************************
   * @ 函数名  ： LED_Task
   * @ 功能说明： LED_Task任务主体
@@ -210,15 +221,22 @@ static void KEY_Task(void* parameter)
 	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
   
   while (1)
-  {
+  {		
     //获取二值信号量 xSemaphore,没获取到则一直等待
 		xReturn = xSemaphoreTake(BinarySem_Handle,/* 二值信号量句柄 */
                               portMAX_DELAY); /* 等待时间 */
+		//PRINTF(" 运行中\n");
     if(pdPASS == xReturn)
     {
+			
+
       LED2_TOGGLE;
-//      PRINTF("收到数据:%s\n",RX_BUFF);
-//      memset(RX_BUFF,0,USART_RBUFF_SIZE);/* 清零 */
+      //PRINTF("收到数据:%c\n",str_c);
+			PRINTF("收到数据:%s\n",arrary);
+			memset(arrary,0,30);
+			index_num=0;
+			//PRINTF(" LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE\n");
+      //memset(RX_BUFF,0,USART_RBUFF_SIZE);/* 清零 */
     }
   }
 }
@@ -265,9 +283,9 @@ static void BSP_Init(void)
 	/* LED 端口初始化 */
 	LED_GPIO_Config();		
 
-//  /* KEY 端口初始化 */
-//  Key_GPIO_Config();
-  
+	/* uart 端口初始化 */
+	UART_Config();
+
   /* 初始化KEY引脚 */
   Key_IT_GPIO_Config();
 
