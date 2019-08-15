@@ -101,9 +101,10 @@ int main(void)
   /* 开发板硬件初始化 */
   BSP_Init();
   
-	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS中断管理实验！\n");
-  PRINTF("按下KEY1 | KEY2触发中断！\n");
-  PRINTF("串口发送数据触发中断,任务处理数据!\n");
+	PRINTF("这是一个[野火]-全系列开发板-FreeRTOS中断管理实验！\r\n");
+  PRINTF("按下KEY1 | KEY2触发中断！\r\n");
+  PRINTF("串口发送数据触发中断,任务处理数据!\r\n");
+	PRINTF("注意！！！\r\n 串口发送数据时，在数据后面加一个回车!\r\n");
   
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
@@ -139,13 +140,13 @@ static void AppTaskCreate(void)
                             (UBaseType_t ) QUEUE_SIZE);/* 消息的大小 */
   
 	if(NULL != Test_Queue)
-    PRINTF("Test_Queue消息队列创建成功!\n");
+    PRINTF("Test_Queue消息队列创建成功!\r\n");
 	
   /* 创建 BinarySem */
   BinarySem_Handle = xSemaphoreCreateBinary();	 
   
 	if(NULL != BinarySem_Handle)
-    PRINTF("BinarySem_Handle二值信号量创建成功!\n");
+    PRINTF("BinarySem_Handle二值信号量创建成功!\r\n");
 	
   /* 创建LED_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )LED_Task, /* 任务入口函数 */
@@ -155,7 +156,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )2,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    PRINTF("创建LED_Task任务成功!\n");
+    PRINTF("创建LED_Task任务成功!\r\n");
   /* 创建KEY_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )KEY_Task,  /* 任务入口函数 */
                         (const char*    )"KEY_Task",/* 任务名字 */
@@ -164,7 +165,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )3, /* 任务的优先级 */
                         (TaskHandle_t*  )&KEY_Task_Handle);/* 任务控制块指针 */ 
   if(pdPASS == xReturn)
-    PRINTF("创建KEY_Task任务成功!\n");
+    PRINTF("创建KEY_Task任务成功!\r\n");
   
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
@@ -203,7 +204,6 @@ static void LED_Task(void* parameter)
 }
 extern uint8_t arrary[30];
 extern int index_num;
-//extern uint8_t str_c;//测试的字符串
 /**********************************************************************
   * @ 函数名  ： LED_Task
   * @ 功能说明： LED_Task任务主体
@@ -220,15 +220,11 @@ static void KEY_Task(void* parameter)
 		xReturn = xSemaphoreTake(BinarySem_Handle,/* 二值信号量句柄 */
                               portMAX_DELAY); /* 等待时间 */
     if(pdPASS == xReturn)
-    {
-			
-
+    {	
       LED2_TOGGLE;
-			PRINTF("收到数据:%s\n",arrary);
-			memset(arrary,0,30);
+			PRINTF("收到数据:%s\r\n",RX_BUFF);
+			memset(RX_BUFF,0,USART_RBUFF_SIZE);
 			index_num=0;
-			//PRINTF(" LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE LED2_TOGGLE\n");
-      //memset(RX_BUFF,0,USART_RBUFF_SIZE);/* 清零 */
     }
   }
 }

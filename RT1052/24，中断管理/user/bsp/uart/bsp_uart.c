@@ -30,7 +30,7 @@
 #include "queue.h"
 #include "semphr.h"
 
-__attribute__ ((at(0x30000000))) uint8_t RX_BUFF[USART_RBUFF_SIZE]={0};
+uint8_t RX_BUFF[USART_RBUFF_SIZE]={0};
 
 /**
 * @brief  初始化uart配置参数
@@ -149,7 +149,7 @@ void Uart_SendHalfWord(LPUART_Type *base, uint16_t ch)
 extern SemaphoreHandle_t BinarySem_Handle;
 
 /******************串口接收中断服务函数********************/
- extern SemaphoreHandle_t BinarySem_Handle;
+extern SemaphoreHandle_t BinarySem_Handle;
 void UART_IdelCallback(void)
 {
 	BaseType_t pxHigherPriorityTaskWoken;
@@ -172,18 +172,14 @@ void DEBUG_UART_IRQHandler(void)
   /*串口接收到数据*/
   if ((kLPUART_RxDataRegFullFlag)&LPUART_GetStatusFlags(DEBUG_UARTx))
   {
-			
-
 			/*读取数据*///这句话一定要有，否则清不了标志，会死在中断里面
 			ucTemp = LPUART_ReadByte(DEBUG_UARTx);
-			str_c=ucTemp;
-			arrary[index_num++]=ucTemp;
-			//发送数据是 加回车
-			if((arrary[index_num-2]==0x0D)&&(arrary[index_num-1]==0x0A))
+			RX_BUFF[index_num++]=ucTemp;
+			//发送数据时 末尾 加回车发送
+			if((RX_BUFF[index_num-2]==0x0D)&&(RX_BUFF[index_num-1]==0x0A))
 			{
 				UART_IdelCallback();	/* 释放一个信号量，表示数据已接收 */
 			}
-
    }			
  
   /* 退出临界段 */

@@ -8397,6 +8397,9 @@
             <name>$PROJ_DIR$\..\..\user\bsp\systick\bsp_systick.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\user\bsp\uart\bsp_uart.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\user\bsp\delay\core_delay.c</name>
         </file>
         <file>

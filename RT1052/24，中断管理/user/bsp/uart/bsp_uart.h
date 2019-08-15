@@ -53,8 +53,7 @@
 #define  DEBUG_UART_ENABLE_SEND        true
 #define  DEBUG_UART_ENABLE_RESIVE      true
 
-//#define  USART_RBUFF_SIZE            1000 
-#define  USART_RBUFF_SIZE            100 
+#define  USART_RBUFF_SIZE            1000 
 
 /*******************************************************************************
  * uart“˝Ω≈≈‰÷√
