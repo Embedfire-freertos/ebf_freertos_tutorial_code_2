@@ -23,7 +23,7 @@
 #define DEBUG_USART_TX_AF                       GPIO_AF7_USART1
 
 #define DEBUG_USART_IRQHandler                  USART1_IRQHandler
-#define DEBUG_USART_IRQ                 		USART1_IRQn
+#define DEBUG_USART_IRQ                 		    USART1_IRQn
 /************************************************************/
 
 

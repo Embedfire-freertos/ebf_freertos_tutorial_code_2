@@ -8,13 +8,12 @@
   ******************************************************************************
   * @attention
   *
-  * 实验平台:秉火  STM32 F746 开发板  
+  * 实验平台:秉火  STM32 H750 开发板  
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :http://firestm32.taobao.com
   *
   ******************************************************************************
   */ 
-  
 #include "./usart/bsp_debug_usart.h"
 
 UART_HandleTypeDef UartHandle;
@@ -65,7 +64,6 @@ void DEBUG_USART_Config(void)
     UartHandle.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED;
     UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
     HAL_UART_Init(&UartHandle);
-
 }
 
 

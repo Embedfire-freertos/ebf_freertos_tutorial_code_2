@@ -3,12 +3,12 @@
   * @file    main.c
   * @author  fire
   * @version V1.0
-  * @date    2018-xx-xx
-  * @brief   USART—USART1接发例程
+  * @date    2019-xx-xx
+  * @brief   FreeRTOS裸机例程
   ******************************************************************
   * @attention
   *
-  * 实验平台:野火 STM32H743开发板 
+  * 实验平台:野火 STM32H750V开发板 
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :http://firestm32.taobao.com
   *
@@ -27,7 +27,7 @@
 int main(void)
 { 
 
-	/* 系统时钟初始化成400MHz */
+	/* 系统时钟初始化成480MHz */
 	SystemClock_Config();
   /* 初始化LED */
   LED_GPIO_Config();
@@ -44,8 +44,8 @@ int main(void)
   * @brief  System Clock 配置
   *         system Clock 配置如下: 
 	*            System Clock source  = PLL (HSE)
-	*            SYSCLK(Hz)           = 400000000 (CPU Clock)
-	*            HCLK(Hz)             = 200000000 (AXI and AHBs Clock)
+	*            SYSCLK(Hz)           = 480000000 (CPU Clock)
+	*            HCLK(Hz)             = 240000000 (AXI and AHBs Clock)
 	*            AHB Prescaler        = 2
 	*            D1 APB3 Prescaler    = 2 (APB3 Clock  100MHz)
 	*            D2 APB1 Prescaler    = 2 (APB1 Clock  100MHz)
