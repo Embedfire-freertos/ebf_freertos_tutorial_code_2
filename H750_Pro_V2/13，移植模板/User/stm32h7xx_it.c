@@ -34,7 +34,8 @@
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx.h"
 #include "stm32h7xx_it.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
 /* USER CODE BEGIN 0 */
 
 //extern SD_HandleTypeDef uSdHandle;
@@ -167,16 +168,18 @@ void PendSV_Handler(void)
 /**
 * @brief This function handles System tick timer.
 */
+extern void xPortSysTickHandler(void);
+//systick中断服务函数
 void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  HAL_SYSTICK_IRQHandler();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
+{	
+    #if (INCLUDE_xTaskGetSchedulerState  == 1 )
+      if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+      {
+    #endif  /* INCLUDE_xTaskGetSchedulerState */  
+        xPortSysTickHandler();
+    #if (INCLUDE_xTaskGetSchedulerState  == 1 )
+      }
+    #endif  /* INCLUDE_xTaskGetSchedulerState */
 }
 
 /******************************************************************************/
