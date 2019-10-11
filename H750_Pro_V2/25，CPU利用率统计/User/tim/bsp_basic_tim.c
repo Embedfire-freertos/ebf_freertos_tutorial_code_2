@@ -8,15 +8,15 @@
   ******************************************************************************
   * @attention
   *
-  * 实验平台:秉火  STM32 F429 开发板  
+  * 实验平台:野火  STM32 H750 开发板  
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :https://fire-stm32.taobao.com
   *
   ******************************************************************************
   */
   
-#include "bsp_basic_tim.h"
-#include "bsp_led.h" 
+#include "./tim/bsp_basic_tim.h"
+#include "./led/bsp_led.h" 
 TIM_HandleTypeDef TIM_Base;
 
 
@@ -52,9 +52,9 @@ static void TIMx_Configuration(void)
     TIM_Base.Init.Period = 1000 - 1;
     //定时器时钟源TIMxCLK = 2 * PCLK1  
     //				PCLK1 = HCLK / 4 
-    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=200MHz
+    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=240MHz
     // 设定定时器频率为=TIMxCLK/(TIM_Prescaler+1)=10000Hz
-    TIM_Base.Init.Prescaler =  400 - 1;
+    TIM_Base.Init.Prescaler =  2400 - 1;
     // 初始化定时器TIM
     HAL_TIM_Base_Init(&TIM_Base);
     // 开启定时器更新中断
@@ -72,7 +72,16 @@ void TIM_Basic_Init(void)
   
     TIMx_NVIC_Configuration();
 }
-
+/**
+  * @brief  定时器更新中断回调函数
+  * @param  htim : TIM句柄
+  * @retval 无
+  */
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)非本实验
+//{
+//    if(htim->Instance == TIM6)
+//        LED1_TOGGLE;
+//}
 
 
 /*********************************************END OF FILE**********************/

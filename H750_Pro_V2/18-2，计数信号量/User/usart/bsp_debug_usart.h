@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 
+
 //Òý½Å¶¨Òå
 /*******************************************************/
 #define DEBUG_USART                             USART1
@@ -22,7 +23,7 @@
 #define DEBUG_USART_TX_AF                       GPIO_AF7_USART1
 
 #define DEBUG_USART_IRQHandler                  USART1_IRQHandler
-#define DEBUG_USART_IRQ                 		USART1_IRQn
+#define DEBUG_USART_IRQ                 		    USART1_IRQn
 /************************************************************/
 
 
@@ -33,5 +34,4 @@ void Usart_SendString(uint8_t *str);
 void DEBUG_USART_Config(void);
 //int fputc(int ch, FILE *f);
 extern UART_HandleTypeDef UartHandle;
-
 #endif /* __USART1_H */

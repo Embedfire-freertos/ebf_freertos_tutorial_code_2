@@ -35,10 +35,12 @@
 #include "stm32h7xx.h"
 #include "stm32h7xx_it.h"
 #include "bsp_basic_tim.h"
-/* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
+/* USER CODE BEGIN 0 */
 
+//extern SD_HandleTypeDef uSdHandle;
+/* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 
@@ -123,9 +125,20 @@ void UsageFault_Handler(void)
   /* USER CODE END UsageFault_IRQn 1 */
 }
 
+/**
+* @brief This function handles System service call via SWI instruction.
+*/
+#if 0
+void SVC_Handler(void)
+{
+  /* USER CODE BEGIN SVCall_IRQn 0 */
 
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
 
-
+  /* USER CODE END SVCall_IRQn 1 */
+}
+#endif
 /**
 * @brief This function handles Debug monitor.
 */
@@ -139,13 +152,24 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
+/**
+* @brief This function handles Pendable request for system service.
+*/
+#if 0
+void PendSV_Handler(void)
+{
+  /* USER CODE BEGIN PendSV_IRQn 0 */
 
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
 
+  /* USER CODE END PendSV_IRQn 1 */
+}
+#endif
 /**
 * @brief This function handles System tick timer.
 */
 extern void xPortSysTickHandler(void);
-
 //systick中断服务函数
 void SysTick_Handler(void)
 {	
@@ -173,11 +197,9 @@ void BASIC_TIM_IRQHandler(void)
   * @param  htim : TIM句柄
   * @retval 无
   */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM6)
         CPU_RunTime++;
 }
-
-
-

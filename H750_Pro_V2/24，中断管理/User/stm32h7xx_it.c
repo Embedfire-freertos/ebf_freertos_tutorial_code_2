@@ -34,16 +34,18 @@
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx.h"
 #include "stm32h7xx_it.h"
-/* 开发板硬件bsp头文件 */
-#include "bsp_led.h"
-#include "bsp_debug_usart.h"
-#include "bsp_key.h"
-#include "bsp_exti.h"
-/* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "queue.h"
+#include "bsp_exti.h"
+#include "bsp_key.h"
+#include "bsp_debug_usart.h"
 #include "semphr.h"
+#include "queue.h"
+
+/* USER CODE BEGIN 0 */
+
+//extern SD_HandleTypeDef uSdHandle;
+/* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 
@@ -128,9 +130,20 @@ void UsageFault_Handler(void)
   /* USER CODE END UsageFault_IRQn 1 */
 }
 
+/**
+* @brief This function handles System service call via SWI instruction.
+*/
+#if 0
+void SVC_Handler(void)
+{
+  /* USER CODE BEGIN SVCall_IRQn 0 */
 
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
 
-
+  /* USER CODE END SVCall_IRQn 1 */
+}
+#endif
 /**
 * @brief This function handles Debug monitor.
 */
@@ -144,8 +157,20 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
+/**
+* @brief This function handles Pendable request for system service.
+*/
+#if 0
+void PendSV_Handler(void)
+{
+  /* USER CODE BEGIN PendSV_IRQn 0 */
 
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
 
+  /* USER CODE END PendSV_IRQn 1 */
+}
+#endif
 /**
 * @brief This function handles System tick timer.
 */
@@ -162,8 +187,6 @@ void SysTick_Handler(void)
       }
     #endif  /* INCLUDE_xTaskGetSchedulerState */
 }
-
-
 
 
 /* 声明引用外部队列 & 二值信号量 */
@@ -259,9 +282,4 @@ void DEBUG_USART_IRQHandler(void)
   /* 退出临界段 */
   taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 }
-
-
-
-
-
 

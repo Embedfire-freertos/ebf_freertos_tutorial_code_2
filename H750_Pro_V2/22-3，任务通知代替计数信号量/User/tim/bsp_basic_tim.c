@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * 实验平台:秉火  STM32 F429 开发板  
+  * 实验平台:野火  STM32 H750 开发板  
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :https://fire-stm32.taobao.com
   *
@@ -52,9 +52,9 @@ static void TIMx_Configuration(void)
     TIM_Base.Init.Period = 5000 - 1;
     //定时器时钟源TIMxCLK = 2 * PCLK1  
     //				PCLK1 = HCLK / 4 
-    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=200MHz
+    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=240MHz
     // 设定定时器频率为=TIMxCLK/(TIM_Prescaler+1)=10000Hz
-    TIM_Base.Init.Prescaler =  20000 - 1;
+    TIM_Base.Init.Prescaler =  24000 - 1;
     // 初始化定时器TIM
     HAL_TIM_Base_Init(&TIM_Base);
     // 开启定时器更新中断

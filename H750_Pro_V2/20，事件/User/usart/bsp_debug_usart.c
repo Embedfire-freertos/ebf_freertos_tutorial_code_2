@@ -8,13 +8,14 @@
   ******************************************************************************
   * @attention
   *
-  * 实验平台:秉火  STM32 F746 开发板  
+  * 实验平台:秉火  STM32 H750 开发板  
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :http://firestm32.taobao.com
   *
   ******************************************************************************
   */ 
-#include "bsp_debug_usart.h"
+  
+#include "./usart/bsp_debug_usart.h"
 
 UART_HandleTypeDef UartHandle;
 extern uint8_t ucTemp;  
@@ -64,12 +65,6 @@ void DEBUG_USART_Config(void)
     UartHandle.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED;
     UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
     HAL_UART_Init(&UartHandle);
-
-    /*串口1中断初始化 */
-    HAL_NVIC_SetPriority(DEBUG_USART_IRQ, 6, 0);
-    HAL_NVIC_EnableIRQ(DEBUG_USART_IRQ);
-    /*配置串口接收中断 */
-    __HAL_UART_ENABLE_IT(&UartHandle,UART_IT_RXNE);  
 }
 
 
