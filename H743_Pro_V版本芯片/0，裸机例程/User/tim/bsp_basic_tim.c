@@ -52,9 +52,9 @@ static void TIMx_Configuration(void)
     TIM_Base.Init.Period = 5000 - 1;
     //定时器时钟源TIMxCLK = 2 * PCLK1  
     //				PCLK1 = HCLK / 4 
-    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=200MHz
+    //				=> TIMxCLK=HCLK/2=SystemCoreClock/2=240MHz
     // 设定定时器频率为=TIMxCLK/(TIM_Prescaler+1)=10000Hz
-    TIM_Base.Init.Prescaler =  20000 - 1;
+    TIM_Base.Init.Prescaler =  24000 - 1;
     // 初始化定时器TIM
     HAL_TIM_Base_Init(&TIM_Base);
     // 开启定时器更新中断
