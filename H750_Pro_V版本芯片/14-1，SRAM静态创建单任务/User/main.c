@@ -190,7 +190,7 @@ static void LED_Task(void* parameter)
   *********************************************************************/
 static void BSP_Init(void)
 {
-  /* 系统时钟初始化成400MHz */
+  /* 系统时钟初始化成480MHz */
 	SystemClock_Config();
   
   /* 初始化SysTick */
